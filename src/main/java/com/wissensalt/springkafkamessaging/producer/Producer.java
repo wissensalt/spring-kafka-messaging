@@ -1,8 +1,9 @@
 package com.wissensalt.springkafkamessaging.producer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.wissensalt.springkafkamessaging.data.Employee;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -11,18 +12,31 @@ import org.springframework.stereotype.Service;
  *
  * @author <a href="mailto:fauzi.knightmaster.achmad@gmail.com">Achmad Fauzi</a>
  */
+@Slf4j
+@RequiredArgsConstructor
 @Service
 public class Producer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Producer.class);
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    private static final String TOPIC = "users";
+    @Value("${topic.one}")
+    private String topicOne;
 
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    @Value("${topic.two}")
+    private String topicTwo;
 
-    public void sendMessage(String p_Message) {
-        LOGGER.info("Sending Message {}", p_Message);
-        kafkaTemplate.send(TOPIC, p_Message);
+    public void sendToTopicOne(String message) {
+        log.info("Sending Message To Topic One : {}", message);
+        kafkaTemplate.send(topicOne, message);
+    }
+
+    public void sendToTopicTwo(String message) {
+        log.info("Sending Message To Topic Two : {}", message);
+        kafkaTemplate.send(topicTwo, message);
+    }
+
+    public void sendToTopicTwo(Employee employee) {
+        log.info("Sending Message To Topic Two : {}", employee);
+        kafkaTemplate.send(topicTwo, employee);
     }
 }
